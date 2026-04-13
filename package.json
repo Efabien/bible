@@ -1,0 +1,11 @@
+{
+  "name": "baiboly",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Baiboly — Malagasy Bible App",
+  "scripts": {
+    "build:data": "node scripts/build-data.js",
+    "dev": "node scripts/dev-server.js",
+    "start": "npm run build:data && npm run dev"
+  }
+}

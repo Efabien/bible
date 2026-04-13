@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bible App — Sketch</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #F5F8FC;
+      --text: #1A2B4A;
+      --text-muted: #7088A8;
+      --accent: #3B7DD8;
+      --accent-light: #E3EEFB;
+      --surface: #FFFFFF;
+      --border: #D4E0ED;
+      --verse-num: #9AB2D0;
+      --shadow: rgba(26, 43, 74, 0.06);
+    }
+
+    .dark {
+      --bg: #0F1724;
+      --text: #D4E0ED;
+      --text-muted: #5A7290;
+      --accent: #5A9BF0;
+      --accent-light: #1A2840;
+      --surface: #162030;
+      --border: #243448;
+      --verse-num: #3A5270;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: 'Noto Serif', Georgia, serif;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* Phone frame */
+    .phone {
+      width: 375px;
+      height: 812px;
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Status bar */
+    .status-bar {
+      height: 50px;
+      padding: 14px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+      color: var(--text);
+    }
+
+    /* ==================== */
+    /*    READER SCREEN     */
+    /* ==================== */
+
+    .screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .screen.hidden { display: none; }
+
+    /* Reader header */
+    .reader-header {
+      padding: 8px 24px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .reader-location {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .reader-location:hover {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .reader-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      font-size: 18px;
+    }
+
+    .icon-btn:hover {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    /* Chapter progress bar */
+    .progress-bar {
+      height: 2px;
+      background: var(--border);
+      margin: 0 24px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 35%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+
+    /* Search pull-down */
+    .search-pull {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+
+    .search-pull.open {
+      max-height: 70px;
+      padding: 12px 24px;
+    }
+
+    .search-input-wrap {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 0 14px;
+      gap: 10px;
+      transition: border-color 0.2s;
+    }
+
+    .search-input-wrap:focus-within {
+      border-color: var(--accent);
+    }
+
+    .search-input-wrap svg {
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      padding: 11px 0;
+      color: var(--text);
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* Reader content */
+    .reader-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px 100px;
+      scroll-behavior: smooth;
+    }
+
+    .reader-content::-webkit-scrollbar { display: none; }
+
+    .chapter-heading {
+      font-family: 'Inter', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 24px;
+      line-height: 1;
+    }
+
+    .chapter-heading span {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+
+    .passage {
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .v {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--verse-num);
+      vertical-align: super;
+      margin-right: 2px;
+      line-height: 0;
+    }
+
+    /* Chapter nav (swipe hint) */
+    .chapter-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      margin-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .chapter-nav-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .chapter-nav-btn:hover {
+      background: var(--accent-light);
+    }
+
+    /* ==================== */
+    /*   SEARCH RESULTS     */
+    /* ==================== */
+
+    .search-results {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 24px 100px;
+    }
+
+    .search-results.visible { display: block; }
+
+    .search-result-item {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .search-result-item:hover { opacity: 0.7; }
+
+    .search-result-ref {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .search-result-text {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .search-result-text mark {
+      background: var(--accent-light);
+      color: var(--accent);
+      border-radius: 2px;
+      padding: 0 2px;
+    }
+
+    .search-hint {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    /* ==================== */
+    /*    BOOKS SCREEN      */
+    /* ==================== */
+
+    .books-header {
+      padding: 16px 24px 12px;
+      flex-shrink: 0;
+    }
+
+    .books-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .books-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 24px 100px;
+    }
+
+    .books-content::-webkit-scrollbar { display: none; }
+
+    .testament-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 20px 0 12px;
+    }
+
+    .testament-label:first-child { margin-top: 8px; }
+
+    .books-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .book-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .book-card:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .book-card.active {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .book-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .book-chapters {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Chapter selector (expands under book) */
+    .chapter-select {
+      grid-column: 1 / -1;
+      background: var(--surface);
+      border: 1.5px solid var(--accent);
+      border-radius: 12px;
+      padding: 16px;
+      display: none;
+    }
+
+    .chapter-select.visible { display: block; }
+
+    .chapter-select-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .chapter-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+
+    .chapter-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--bg);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .chapter-cell:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* ==================== */
+    /*    SETTINGS SCREEN   */
+    /* ==================== */
+
+    .settings-header {
+      padding: 16px 24px 12px;
+      flex-shrink: 0;
+    }
+
+    .settings-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .settings-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 24px 100px;
+    }
+
+    .settings-group {
+      margin-bottom: 24px;
+    }
+
+    .settings-group-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setting-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .setting-value {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Toggle switch */
+    .toggle {
+      width: 48px;
+      height: 28px;
+      background: var(--border);
+      border-radius: 14px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle.on { background: var(--accent); }
+
+    .toggle::after {
+      content: '';
+      width: 22px;
+      height: 22px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    .toggle.on::after { transform: translateX(20px); }
+
+    /* Font size preview */
+    .font-slider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .font-slider span {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-muted);
+    }
+
+    .font-slider span:first-child { font-size: 12px; }
+    .font-slider span:last-child { font-size: 18px; }
+
+    .font-slider input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    /* ==================== */
+    /*     BOTTOM NAV       */
+    /* ==================== */
+
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 84px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      padding-top: 10px;
+      padding-bottom: 34px;
+      z-index: 10;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 16px;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .nav-item.active { color: var(--accent); }
+
+    .nav-item svg { width: 22px; height: 22px; }
+
+    .nav-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>&#9679;&#9679;&#9679;&#9679; &nbsp; &#128267;</span>
+  </div>
+
+  <!-- ============ READER SCREEN ============ -->
+  <div class="screen" id="screen-reader">
+
+    <div class="reader-header">
+      <div class="reader-location" onclick="showScreen('books')">Genesis 1</div>
+      <div class="reader-actions">
+        <button class="icon-btn" onclick="toggleSearch()" title="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        </button>
+        <button class="icon-btn" onclick="toggleTheme()" title="Theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+
+    <!-- Pull-down search -->
+    <div class="search-pull" id="searchPull">
+      <div class="search-input-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <input class="search-input" type="text" placeholder="Search verses..." oninput="onSearch(this.value)">
+      </div>
+    </div>
+
+    <!-- Search results (overlays reader) -->
+    <div class="search-results" id="searchResults">
+      <div class="search-hint" id="searchHint">Type to search across all books</div>
+    </div>
+
+    <!-- Reader body -->
+    <div class="reader-content" id="readerContent">
+      <div class="chapter-heading">
+        <span>Genesis</span>
+        Chapter 1
+      </div>
+
+      <p class="passage">
+        <span class="v">1</span>In the beginning, when all things were yet unformed and the vast expanse lay silent, there arose from the deep a stirring of purpose beyond mortal reckoning. <span class="v">2</span>And the earth was without shape, an endless void wrapped in darkness, and a mighty wind swept across the face of the waters. <span class="v">3</span>Then a voice spoke into the emptiness, calling forth light from where there had been none, and light came into being, brilliant and unfailing. <span class="v">4</span>The light was seen to be good, and it was set apart from the darkness, each given its own dominion and hour. <span class="v">5</span>The light was called Day, and the darkness Night. And so evening came, and morning followed — the first day.
+      </p>
+
+      <p class="passage">
+        <span class="v">6</span>Then it was spoken again: let there be a firmament in the midst of the waters, a great dome to divide the waters below from the waters above. <span class="v">7</span>And it was so, the firmament stretched out like a curtain over the deep, holding all things in their appointed place. <span class="v">8</span>The firmament was called Heaven. And evening came, and morning followed — the second day.
+      </p>
+
+      <p class="passage">
+        <span class="v">9</span>And the voice spoke once more, gathering the waters beneath the heavens into one place so that dry ground might appear. <span class="v">10</span>The dry ground was called Earth, and the gathered waters were called Seas — and it was good. <span class="v">11</span>Then the earth brought forth every kind of growing thing: grasses bearing seed, trees yielding fruit, each according to its own kind. <span class="v">12</span>And the earth was clothed in green, abundant and flourishing, and it was good. <span class="v">13</span>And evening came, and morning followed — the third day.
+      </p>
+
+      <div class="chapter-nav">
+        <button class="chapter-nav-btn" style="visibility:hidden">&larr; Previous</button>
+        <button class="chapter-nav-btn">Chapter 2 &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BOOKS SCREEN ============ -->
+  <div class="screen hidden" id="screen-books">
+
+    <div class="books-header">
+      <div class="books-title">Books</div>
+    </div>
+
+    <div class="books-content">
+
+      <div class="testament-label">Old Testament</div>
+      <div class="books-grid" id="grid-ot">
+        <div class="book-card active" onclick="selectBook(this, 'Genesis', 50)">
+          <div class="book-name">Genesis</div>
+          <div class="book-chapters">50 chapters</div>
+        </div>
+        <div class="book-card" onclick="selectBook(this, 'Psalms', 150)">
+          <div class="book-name">Psalms</div>
+          <div class="book-chapters">150 chapters</div>
+        </div>
+        <div class="chapter-select" id="chapterSelect-ot"></div>
+      </div>
+
+      <div class="testament-label">New Testament</div>
+      <div class="books-grid" id="grid-nt">
+        <div class="book-card" onclick="selectBook(this, 'Matthew', 28)">
+          <div class="book-name">Matthew</div>
+          <div class="book-chapters">28 chapters</div>
+        </div>
+        <div class="book-card" onclick="selectBook(this, 'Revelation', 22)">
+          <div class="book-name">Revelation</div>
+          <div class="book-chapters">22 chapters</div>
+        </div>
+        <div class="chapter-select" id="chapterSelect-nt"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ SETTINGS SCREEN ============ -->
+  <div class="screen hidden" id="screen-settings">
+
+    <div class="settings-header">
+      <div class="settings-title">Settings</div>
+    </div>
+
+    <div class="settings-content">
+
+      <div class="settings-group">
+        <div class="settings-group-title">Appearance</div>
+        <div class="setting-row">
+          <span class="setting-label">Dark Mode</span>
+          <div class="toggle" id="darkToggle" onclick="toggleTheme()"></div>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">Font Size</span>
+          <div class="font-slider">
+            <span>A</span>
+            <input type="range" min="14" max="22" value="17" oninput="setFontSize(this.value)">
+            <span>A</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group-title">Reading</div>
+        <div class="setting-row">
+          <span class="setting-label">Keep Screen Awake</span>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ BOTTOM NAV ============ -->
+  <div class="bottom-nav">
+    <button class="nav-item active" id="nav-reader" onclick="showScreen('reader')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span class="nav-label">Read</span>
+    </button>
+    <button class="nav-item" id="nav-books" onclick="showScreen('books')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="nav-label">Books</span>
+    </button>
+    <button class="nav-item" id="nav-settings" onclick="showScreen('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="nav-label">Settings</span>
+    </button>
+  </div>
+
+</div>
+
+<script>
+  // ==== Bible data (placeholder lorem-style) ====
+  const bible = {
+    "Genesis": {
+      1: [
+        "In the beginning, when all things were yet unformed and the vast expanse lay silent, there arose from the deep a stirring of purpose beyond mortal reckoning.",
+        "And the earth was without shape, an endless void wrapped in darkness, and a mighty wind swept across the face of the waters.",
+        "Then a voice spoke into the emptiness, calling forth light from where there had been none, and light came into being, brilliant and unfailing.",
+        "The light was seen to be good, and it was set apart from the darkness, each given its own dominion and hour.",
+        "The light was called Day, and the darkness Night. And so evening came, and morning followed — the first day.",
+        "Then it was spoken again: let there be a firmament in the midst of the waters, a great dome to divide the waters below from the waters above.",
+        "And it was so, the firmament stretched out like a curtain over the deep, holding all things in their appointed place.",
+        "The firmament was called Heaven. And evening came, and morning followed — the second day.",
+        "And the voice spoke once more, gathering the waters beneath the heavens into one place so that dry ground might appear.",
+        "The dry ground was called Earth, and the gathered waters were called Seas — and it was good.",
+        "Then the earth brought forth every kind of growing thing: grasses bearing seed, trees yielding fruit, each according to its own kind.",
+        "And the earth was clothed in green, abundant and flourishing, and it was good.",
+        "And evening came, and morning followed — the third day."
+      ],
+      2: [
+        "Thus the heavens and the earth were completed in all their vast array, and every living thing found its place within the order of creation.",
+        "By the seventh day the work was finished, and there was rest — a sacred pause woven into the rhythm of all things.",
+        "The seventh day was blessed and set apart, for on it all labor ceased and silence held dominion.",
+        "These are the generations of the heavens and the earth, a record of beginnings and the unfolding of all that would come to pass.",
+        "No shrub of the field had yet sprung up, for there had been no rain upon the earth, and no hand to tend the ground."
+      ]
+    },
+    "Psalms": {
+      1: [
+        "Blessed is the one who does not walk in the counsel of the wicked, nor stand in the way of sinners, nor sit in the seat of the scornful.",
+        "But their delight is in the law of the Most High, and on that law they meditate day and night.",
+        "They are like a tree planted by streams of water, yielding fruit in its season, whose leaf does not wither — whatever they do prospers.",
+        "Not so the wicked; they are like chaff that the wind drives away.",
+        "Therefore the wicked will not stand in the judgment, nor sinners in the assembly of the righteous.",
+        "For the Most High watches over the way of the righteous, but the way of the wicked will perish."
+      ],
+      23: [
+        "The Lord is my shepherd, I shall not want. He makes me lie down in green pastures.",
+        "He leads me beside still waters. He restores my soul.",
+        "He guides me along the right paths for the sake of his name.",
+        "Even though I walk through the valley of the shadow of death, I will fear no evil, for you are with me; your rod and your staff, they comfort me.",
+        "You prepare a table before me in the presence of my enemies. You anoint my head with oil; my cup overflows.",
+        "Surely goodness and mercy shall follow me all the days of my life, and I shall dwell in the house of the Lord forever."
+      ]
+    },
+    "Matthew": {
+      1: [
+        "The book of the genealogy, a record of origin tracing the lineage through the ages, from patriarch to patriarch, generation upon generation.",
+        "Abraham was the father of Isaac, and Isaac the father of Jacob, and Jacob the father of Judah and his brothers.",
+        "And Judah was the father of Perez and Zerah, whose mother was Tamar, and Perez was the father of Hezron, and Hezron the father of Ram.",
+        "Thus all the generations from the beginning to the exile were fourteen, and from the exile to the appointed time, fourteen generations more.",
+        "Now the birth came about in this way: his mother was pledged in marriage, and before they came together, she was found to be with child through the Holy Spirit."
+      ],
+      5: [
+        "And seeing the multitudes, he went up on a mountain, and when he was seated his disciples came to him.",
+        "Then he opened his mouth and taught them, saying: Blessed are the poor in spirit, for theirs is the kingdom of heaven.",
+        "Blessed are those who mourn, for they shall be comforted.",
+        "Blessed are the meek, for they shall inherit the earth.",
+        "Blessed are those who hunger and thirst for righteousness, for they shall be filled.",
+        "Blessed are the merciful, for they shall obtain mercy.",
+        "Blessed are the pure in heart, for they shall see God.",
+        "Blessed are the peacemakers, for they shall be called children of God."
+      ]
+    },
+    "Revelation": {
+      1: [
+        "The revelation of that which was hidden, given to show what must soon take place, made known by sending a messenger to his servant.",
+        "Who bore witness to the word and to the testimony of all that he saw.",
+        "Blessed is the one who reads aloud the words of this prophecy, and blessed are those who hear and keep what is written in it, for the time is near.",
+        "Grace to you and peace, from him who is and who was and who is to come, and from the seven spirits before his throne.",
+        "And from the faithful witness, the firstborn of the dead, and the ruler of the kings of the earth."
+      ],
+      21: [
+        "Then I saw a new heaven and a new earth, for the first heaven and the first earth had passed away, and the sea was no more.",
+        "And I saw the holy city, coming down out of heaven, prepared as a bride adorned for her husband.",
+        "And a great voice from the throne said: Behold, the dwelling place of God is with humanity. He will dwell with them, and they shall be his people.",
+        "He will wipe away every tear from their eyes, and death shall be no more, neither shall there be mourning, nor crying, nor pain anymore, for the former things have passed away.",
+        "And the one seated on the throne said: Behold, I am making all things new."
+      ]
+    }
+  };
+
+  // ==== Screen navigation ====
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    document.getElementById('screen-' + name).classList.remove('hidden');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('nav-' + name).classList.add('active');
+    // close search when leaving reader
+    if (name !== 'reader') {
+      document.getElementById('searchPull').classList.remove('open');
+      document.getElementById('searchResults').classList.remove('visible');
+    }
+  }
+
+  // ==== Search toggle ====
+  function toggleSearch() {
+    const pull = document.getElementById('searchPull');
+    const results = document.getElementById('searchResults');
+    const reader = document.getElementById('readerContent');
+    pull.classList.toggle('open');
+    if (!pull.classList.contains('open')) {
+      results.classList.remove('visible');
+      reader.style.display = '';
+    } else {
+      pull.querySelector('input').focus();
+    }
+  }
+
+  function onSearch(query) {
+    const results = document.getElementById('searchResults');
+    const reader = document.getElementById('readerContent');
+    const hint = document.getElementById('searchHint');
+
+    if (!query.trim()) {
+      results.classList.remove('visible');
+      reader.style.display = '';
+      return;
+    }
+
+    results.classList.add('visible');
+    reader.style.display = 'none';
+    results.innerHTML = '';
+
+    const q = query.toLowerCase();
+    let found = 0;
+
+    for (const [book, chapters] of Object.entries(bible)) {
+      for (const [ch, verses] of Object.entries(chapters)) {
+        verses.forEach((text, i) => {
+          if (text.toLowerCase().includes(q)) {
+            found++;
+            const div = document.createElement('div');
+            div.className = 'search-result-item';
+            div.onclick = () => navigateTo(book, parseInt(ch));
+            const highlighted = text.replace(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'), '<mark>$1</mark>');
+            div.innerHTML = `
+              <div class="search-result-ref">${book} ${ch}:${i + 1}</div>
+              <div class="search-result-text">${highlighted}</div>
+            `;
+            results.appendChild(div);
+          }
+        });
+      }
+    }
+
+    if (found === 0) {
+      results.innerHTML = '<div class="search-hint">No results found</div>';
+    }
+  }
+
+  // ==== Book/chapter picker ====
+  function selectBook(card, bookName, chapterCount) {
+    // Find which grid this card belongs to
+    const grid = card.closest('.books-grid');
+    const testament = grid.id.includes('ot') ? 'ot' : 'nt';
+    const selector = document.getElementById('chapterSelect-' + testament);
+
+    // Toggle off if already selected
+    if (card.classList.contains('active') && selector.classList.contains('visible')) {
+      card.classList.remove('active');
+      selector.classList.remove('visible');
+      return;
+    }
+
+    // Close all chapter selectors and clear all active cards across both testaments
+    document.querySelectorAll('.chapter-select').forEach(s => s.classList.remove('visible'));
+    document.querySelectorAll('.book-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+
+    // Get available chapters from bible data
+    const availableChapters = bible[bookName] ? Object.keys(bible[bookName]).map(Number) : [];
+
+    // Build chapter grid (show available ones, max 30 for the sketch)
+    const max = Math.min(chapterCount, 30);
+    let cells = '';
+    for (let i = 1; i <= max; i++) {
+      const isAvailable = availableChapters.includes(i);
+      cells += `<div class="chapter-cell" style="${isAvailable ? '' : 'opacity:0.35;'}"
+        onclick="${isAvailable ? `navigateTo('${bookName}', ${i})` : ''}">${i}</div>`;
+    }
+    if (chapterCount > 30) cells += `<div class="chapter-cell" style="opacity:0.35">...</div>`;
+
+    selector.innerHTML = `
+      <div class="chapter-select-title">Select chapter</div>
+      <div class="chapter-grid">${cells}</div>
+    `;
+    selector.classList.add('visible');
+
+    // Move selector right after the card row
+    // (it's already at the end of grid, CSS handles spanning)
+  }
+
+  // ==== Navigate to book/chapter ====
+  function navigateTo(book, chapter) {
+    const verses = bible[book]?.[chapter];
+    if (!verses) return;
+
+    // Build passage HTML
+    let html = `<div class="chapter-heading"><span>${book}</span>Chapter ${chapter}</div>`;
+
+    // Group verses into paragraphs (roughly every 4-5 verses)
+    let p = '<p class="passage">';
+    verses.forEach((text, i) => {
+      p += `<span class="v">${i + 1}</span>${text} `;
+      if ((i + 1) % 5 === 0 && i < verses.length - 1) {
+        p += '</p><p class="passage">';
+      }
+    });
+    p += '</p>';
+    html += p;
+
+    html += `<div class="chapter-nav">
+      <button class="chapter-nav-btn">&larr; Previous</button>
+      <button class="chapter-nav-btn">Next &rarr;</button>
+    </div>`;
+
+    document.getElementById('readerContent').innerHTML = html;
+    document.querySelector('.reader-location').textContent = `${book} ${chapter}`;
+
+    // Close search if open
+    document.getElementById('searchPull').classList.remove('open');
+    document.getElementById('searchResults').classList.remove('visible');
+    document.getElementById('readerContent').style.display = '';
+
+    showScreen('reader');
+  }
+
+  // ==== Theme toggle ====
+  let isDark = false;
+  function toggleTheme() {
+    isDark = !isDark;
+    document.getElementById('phone').classList.toggle('dark', isDark);
+    document.getElementById('darkToggle').classList.toggle('on', isDark);
+  }
+
+  // ==== Font size ====
+  function setFontSize(val) {
+    document.querySelectorAll('.passage').forEach(p => {
+      p.style.fontSize = val + 'px';
+    });
+  }
+</script>
+
+</body>
+</html>

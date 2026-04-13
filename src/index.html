@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#F5F8FC">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Baiboly</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <script>if(JSON.parse(localStorage.getItem('baiboly_dark')||'false'))document.documentElement.classList.add('dark')</script>
+</head>
+<body>
+
+  <!-- Skeleton loader -->
+  <div id="skeleton">
+    <div class="sk-header">
+      <div class="sk-bone sk-location"></div>
+      <div class="sk-actions">
+        <div class="sk-bone sk-icon"></div>
+        <div class="sk-bone sk-icon"></div>
+      </div>
+    </div>
+    <div class="sk-bar"><div class="sk-bone sk-bar-fill"></div></div>
+    <div class="sk-body">
+      <div class="sk-bone sk-title-sm"></div>
+      <div class="sk-bone sk-title-lg"></div>
+      <div class="sk-lines">
+        <div class="sk-bone sk-line"></div>
+        <div class="sk-bone sk-line"></div>
+        <div class="sk-bone sk-line w90"></div>
+        <div class="sk-bone sk-line"></div>
+        <div class="sk-bone sk-line w75"></div>
+        <div class="sk-bone sk-line"></div>
+        <div class="sk-bone sk-line"></div>
+        <div class="sk-bone sk-line w85"></div>
+        <div class="sk-bone sk-line"></div>
+        <div class="sk-bone sk-line w60"></div>
+      </div>
+      <div class="sk-lines">
+        <div class="sk-bone sk-line"></div>
+        <div class="sk-bone sk-line"></div>
+        <div class="sk-bone sk-line w80"></div>
+        <div class="sk-bone sk-line"></div>
+        <div class="sk-bone sk-line w70"></div>
+      </div>
+    </div>
+    <div class="sk-nav">
+      <div class="sk-bone sk-nav-item"></div>
+      <div class="sk-bone sk-nav-item"></div>
+      <div class="sk-bone sk-nav-item"></div>
+    </div>
+  </div>
+
+  <div id="app" class="app-hidden">
+
+    <!-- ============ READER SCREEN ============ -->
+    <div class="screen active" id="screen-reader">
+
+      <div class="reader-header">
+        <button class="reader-location" id="readerLocation" onclick="showScreen('books')">Genesisy 1</button>
+        <div class="reader-actions">
+          <button class="icon-btn" onclick="toggleSearch()" aria-label="Hitady">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+          </button>
+          <button class="icon-btn" onclick="toggleTheme()" aria-label="Loko">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+      <!-- Pull-down search -->
+      <div class="search-pull" id="searchPull">
+        <div class="search-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+          <input class="search-input" id="searchInput" type="text" placeholder="Hitady andininy..." oninput="onSearch(this.value)">
+          <button class="search-close" onclick="toggleSearch()">&times;</button>
+        </div>
+      </div>
+
+      <!-- Search results -->
+      <div class="search-results" id="searchResults"></div>
+
+      <!-- Reader body -->
+      <div class="reader-content" id="readerContent"></div>
+    </div>
+
+    <!-- ============ BOOKS SCREEN ============ -->
+    <div class="screen" id="screen-books">
+      <div class="screen-header">
+        <div class="tabs">
+          <button class="tab active" id="tab-boky" onclick="switchTab('boky')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="12" y1="6" x2="12" y2="13"/><line x1="9" y1="9.5" x2="15" y2="9.5"/></svg>Boky</button>
+          <button class="tab" id="tab-vakiteny" onclick="switchTab('vakiteny')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Vakiteny</button>
+        </div>
+      </div>
+      <div class="tab-panel active" id="panel-boky">
+        <div class="books-content" id="booksContent"></div>
+      </div>
+      <div class="tab-panel" id="panel-vakiteny">
+        <div class="vakiteny-content" id="vakitenyContent">
+          <div class="search-hint" id="vakitenyEmpty">Tsy misy vakiteny mbola voatahiry</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SETTINGS SCREEN ============ -->
+    <div class="screen" id="screen-settings">
+      <div class="screen-header">
+        <div class="screen-title">Fikirana</div>
+      </div>
+      <div class="settings-content">
+        <div class="settings-group">
+          <div class="settings-group-title">Fisehoana</div>
+          <div class="setting-row">
+            <span class="setting-label">Maizina</span>
+            <div class="toggle" id="darkToggle" onclick="toggleTheme()"></div>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Haben'ny soratra</span>
+            <div class="font-slider">
+              <span>A</span>
+              <input type="range" min="14" max="24" value="17" id="fontSlider" oninput="setFontSize(this.value)">
+              <span>A</span>
+            </div>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-group-title">Famakiana</div>
+          <div class="setting-row">
+            <span class="setting-label">Tsy matory ny efijery</span>
+            <div class="toggle on" id="wakeLockToggle" onclick="toggleWakeLock()"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ BOTTOM NAV ============ -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" id="nav-reader" onclick="showScreen('reader')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </button>
+      <button class="nav-item" id="nav-books" onclick="showScreen('books')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="12" y1="6" x2="12" y2="13"/><line x1="9" y1="9.5" x2="15" y2="9.5"/></svg>
+      </button>
+      <button class="nav-item" id="nav-settings" onclick="showScreen('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </nav>
+
+  </div>
+
+  <script src="bible-data.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
+</body>
+</html>

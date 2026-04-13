@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#3B7DD8"/>
+  <g transform="translate(256,256)">
+    <!-- Book shape -->
+    <path d="M-80 -100 C-80 -110 -72 -118 -62 -118 L80 -118 C90 -118 98 -110 98 -100 L98 118 L-62 118 C-72 118 -80 110 -80 100 Z" fill="white" opacity="0.95"/>
+    <path d="M-62 118 C-72 118 -80 110 -80 100 C-80 90 -72 82 -62 82 L98 82" fill="none" stroke="white" stroke-width="6" opacity="0.6"/>
+    <!-- Cross -->
+    <line x1="18" y1="-70" x2="18" y2="40" stroke="#3B7DD8" stroke-width="14" stroke-linecap="round"/>
+    <line x1="-20" y1="-30" x2="56" y2="-30" stroke="#3B7DD8" stroke-width="14" stroke-linecap="round"/>
+  </g>
+</svg>
