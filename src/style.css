@@ -3,6 +3,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 :root {
+  color-scheme: light;
   --bg: #F5F8FC;
   --text: #1A2B4A;
   --text-muted: #7088A8;
@@ -16,6 +17,7 @@
 }
 
 html.dark {
+  color-scheme: dark;
   --bg: #0F1724;
   --text: #D4E0ED;
   --text-muted: #5A7290;
