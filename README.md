@@ -61,6 +61,10 @@ The app is a single-page PWA served as static files. A build step (`build-data.j
 3. **Book Picker** — grid of books grouped by testament; tap to expand chapter list
 4. **Settings** — dark mode, font size, keep screen awake
 
+## Acknowledgments
+
+Bible text data provided by [baiboly-json](https://github.com/RaveloMevaSoavina/baiboly-json) by [@RaveloMevaSoavina](https://github.com/RaveloMevaSoavina) — the full Malagasy Bible in JSON format (66 books).
+
 ## License
 
-Private project.
+MIT License — see [LICENSE](LICENSE) for details.
