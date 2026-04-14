@@ -258,9 +258,9 @@ function buildBooksScreen() {
     const tid = gi === 0 ? 'ot' : 'nt';
     html += `<div class="testament-label" onclick="toggleTestament('${tid}')">
       <span>${group.testament}</span>
-      <svg class="testament-chevron" id="chevron-${tid}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <svg class="testament-chevron collapsed" id="chevron-${tid}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>`;
-    html += `<div class="books-grid" id="grid-${tid}">`;
+    html += `<div class="books-grid collapsed" id="grid-${tid}">`;
 
     group.books.forEach(book => {
       const chCount = Object.keys(BIBLE_DATA[book.id].chapters).length;
@@ -275,9 +275,17 @@ function buildBooksScreen() {
 
   container.innerHTML = html;
 
-  // Mark current book as active
+  // Mark current book as active and expand its testament
   const activeCard = container.querySelector(`[data-book="${currentBook}"]`);
-  if (activeCard) activeCard.classList.add('active');
+  if (activeCard) {
+    activeCard.classList.add('active');
+    const parentGrid = activeCard.closest('.books-grid');
+    if (parentGrid && parentGrid.classList.contains('collapsed')) {
+      parentGrid.classList.remove('collapsed');
+      const chevron = document.getElementById('chevron-' + parentGrid.id.replace('grid-', ''));
+      if (chevron) chevron.classList.remove('collapsed');
+    }
+  }
 }
 
 function toggleTestament(tid) {
@@ -339,11 +347,17 @@ function showChapterGrid(card, bookId) {
   selector.innerHTML = `
     <div class="chapter-select-header">
       <div class="picker-pill-wrap">
-        <div class="picker-pill" id="pickerPill">${buildPillHTML(book.name, null, null, null)}</div>
+        <div class="picker-pill" id="pickerPill" onclick="openPickerSelection()">${buildPillHTML(book.name, null, null, null)}</div>
+        <button class="picker-add" id="pickerAdd" onclick="addToVakiteny()" aria-label="Ampio">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
         <button class="picker-pill-reset" onclick="resetPickerToChapters()" aria-label="Reset">&times;</button>
       </div>
     </div>
     <div class="chapter-grid">${cells}</div>
+    <button class="picker-close" onclick="closePicker()" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
   `;
 
   card.insertAdjacentElement('afterend', selector);
@@ -376,14 +390,17 @@ function pickChapter(ch) {
   selector.innerHTML = `
     <div class="chapter-select-header">
       <div class="picker-pill-wrap">
-        <div class="picker-pill" id="pickerPill" onclick="openPickerSelection()">${buildPillHTML(book.name, ch, null, null)}</div>
-        <button class="picker-add" id="pickerAdd" onclick="addToVakiteny()" aria-label="Ampio">
+        <div class="picker-pill ready" id="pickerPill" onclick="openPickerSelection()">${buildPillHTML(book.name, ch, null, null)}</div>
+        <button class="picker-add visible" id="pickerAdd" onclick="addToVakiteny()" aria-label="Ampio">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         </button>
         <button class="picker-pill-reset" onclick="resetPickerToChapters()" aria-label="Reset">&times;</button>
       </div>
     </div>
     <div class="chapter-grid">${cells}</div>
+    <button class="picker-close" onclick="closePicker()" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
   `;
 
   activeCard.insertAdjacentElement('afterend', selector);
@@ -430,11 +447,18 @@ function updatePickerPill() {
 
   const book = BIBLE_DATA[pickerBookId];
   pill.innerHTML = buildPillHTML(book.name, pickerChapter, pickerVerseStart, pickerVerseEnd);
-  const ready = pickerVerseStart !== null;
+  const ready = pickerChapter !== null;
   pill.classList.toggle('ready', ready);
 
   const addBtn = document.getElementById('pickerAdd');
   if (addBtn) addBtn.classList.toggle('visible', ready);
+}
+
+function closePicker() {
+  const existing = document.querySelector('.chapter-select');
+  if (existing) existing.remove();
+  document.querySelectorAll('.book-card').forEach(c => c.classList.remove('active'));
+  resetPicker();
 }
 
 function resetPickerToChapters() {
@@ -569,20 +593,24 @@ function saveVakiteny() {
 }
 
 function addToVakiteny() {
-  if (!pickerBookId || pickerChapter == null || pickerVerseStart == null) return;
+  if (!pickerBookId || pickerChapter == null) return;
 
   const book = BIBLE_DATA[pickerBookId];
+  const verses = book.chapters[pickerChapter];
+  const allVerses = Object.keys(verses).map(Number).sort((a, b) => a - b);
+  const vStart = pickerVerseStart != null ? pickerVerseStart : allVerses[0];
+  const vEnd = pickerVerseEnd != null ? pickerVerseEnd : (pickerVerseStart != null ? pickerVerseStart : allVerses[allVerses.length - 1]);
+
   const entry = {
     id: Date.now(),
     bookId: pickerBookId,
     bookName: book.name,
     chapter: pickerChapter,
-    verseStart: pickerVerseStart,
-    verseEnd: pickerVerseEnd || pickerVerseStart
+    verseStart: vStart,
+    verseEnd: vEnd
   };
 
   // Build preview text
-  const verses = book.chapters[pickerChapter];
   let preview = '';
   for (let v = entry.verseStart; v <= entry.verseEnd; v++) {
     if (verses[v]) preview += verses[v] + ' ';

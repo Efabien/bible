@@ -679,15 +679,15 @@ body {
 .books-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
 .book-card {
   background: var(--surface);
   border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
+  border-radius: 10px;
+  padding: 10px 12px;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -703,20 +703,21 @@ body {
 
 .book-name {
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text);
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
 .book-chapters {
   font-family: 'Inter', sans-serif;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
 }
 
 /* Chapter selector */
 .chapter-select {
+  position: relative;
   grid-column: 1 / -1;
   background: var(--surface);
   border: 1.5px solid var(--accent);
@@ -751,6 +752,22 @@ body {
   padding: 0 2px;
   flex-shrink: 0;
   transition: color 0.15s;
+}
+
+.picker-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.15s;
+}
+
+.picker-close:active {
+  color: var(--accent);
 }
 
 .picker-pill-reset:active {
