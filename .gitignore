@@ -1,2 +1,6 @@
 node_modules/
 src/bible-data.js
+
+# Capacitor native platforms
+android/
+ios/
