@@ -115,27 +115,21 @@
         <div class="screen-title">Fikirana</div>
       </div>
       <div class="settings-content">
-        <div class="settings-group">
-          <div class="settings-group-title">Fisehoana</div>
-          <div class="setting-row">
-            <span class="setting-label">Maizina</span>
-            <div class="toggle" id="darkToggle" onclick="toggleTheme()"></div>
-          </div>
-          <div class="setting-row">
-            <span class="setting-label">Haben'ny soratra</span>
-            <div class="font-slider">
-              <span>A</span>
-              <input type="range" min="14" max="24" value="17" id="fontSlider" oninput="setFontSize(this.value)">
-              <span>A</span>
-            </div>
+        <div class="setting-row">
+          <svg class="setting-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <div class="toggle" id="darkToggle" onclick="toggleTheme()"></div>
+        </div>
+        <div class="setting-row">
+          <svg class="setting-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          <div class="font-slider">
+            <span>A</span>
+            <input type="range" min="14" max="24" value="17" id="fontSlider" oninput="setFontSize(this.value)">
+            <span>A</span>
           </div>
         </div>
-        <div class="settings-group">
-          <div class="settings-group-title">Famakiana</div>
-          <div class="setting-row">
-            <span class="setting-label">Tsy matory ny efijery</span>
-            <div class="toggle on" id="wakeLockToggle" onclick="toggleWakeLock()"></div>
-          </div>
+        <div class="setting-row">
+          <svg class="setting-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <div class="toggle on" id="wakeLockToggle" onclick="toggleWakeLock()"></div>
         </div>
       </div>
     </div>
