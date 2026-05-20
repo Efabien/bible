@@ -33,8 +33,12 @@ Then open the URL shown in your terminal.
 baiboly-json/          # Source Bible text (JSON, one file per book)
   Testameta taloha/    #   Old Testament (39 books)
   Testameta vaovao/    #   New Testament (27 books)
+baiboly-json-v2/       # Alternate Bible text scraped from nybaiboly.net (same layout/filenames)
+  Testameta taloha/
+  Testameta vaovao/
 scripts/
   build-data.js        # Compiles JSON files into bible-data.js
+  scrape-baiboly.js    # Scrapes one book page from nybaiboly.net into a v2-shaped JSON
   dev-server.js        # Local dev server
 src/
   index.html           # App shell
@@ -64,6 +68,8 @@ The app is a single-page PWA served as static files. A build step (`build-data.j
 ## Acknowledgments
 
 Bible text data provided by [baiboly-json](https://github.com/RaveloMevaSoavina/baiboly-json) by [@RaveloMevaSoavina](https://github.com/RaveloMevaSoavina) — the full Malagasy Bible in JSON format (66 books).
+
+The alternate dataset under `baiboly-json-v2/` is scraped from [nybaiboly.net](https://nybaiboly.net/) via `scripts/scrape-baiboly.js`.
 
 ## License
 

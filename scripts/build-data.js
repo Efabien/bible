@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const BASE = path.join(__dirname, '..', 'baiboly-json');
+const BASE = path.join(__dirname, '..', 'baiboly-json-v2');
 const OUT = path.join(__dirname, '..', 'src', 'bible-data.js');
 
 // Canonical book order with display names
